@@ -31,6 +31,8 @@ app.use(
 );
 
 // routes
+import authRoutes from './modules/auth/auth.routes';
+app.use('/api/v1/auth', authRoutes);
 
 app.use(errorMiddleware);
 

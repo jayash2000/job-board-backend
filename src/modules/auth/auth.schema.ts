@@ -23,7 +23,7 @@ export const registerSchema = z
 
     confirmPassword: z.string().trim().min(1, 'Password is empty'),
 
-    role: z.enum(['candidate', 'employer']).default('candidate'),
+    role: z.enum(['candidate', 'employer', 'admin']).default('candidate'),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'Passwords do not match',

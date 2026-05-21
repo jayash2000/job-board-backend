@@ -1,20 +1,24 @@
 import bcrypt from 'bcrypt';
 
 import { v4 as uuid } from 'uuid';
+import jwt from 'jsonwebtoken';
 
 import {
   createUser,
+  deleteRefreshToken,
+  findRefreshToken,
   findUserByEmail,
   storeRefreshToken,
 } from './auth.repository';
 
-import { AppError } from '../../utils/AppError';
-import { isValid } from 'zod/v3';
 import {
   generateAccessToken,
   generateRefreshToken,
   hashToken,
 } from './auth.utils';
+
+import { AppError } from '../../utils/AppError';
+import { env } from '../../config/env';
 
 /*
 REGISTER USER
@@ -66,7 +70,7 @@ export const loginUser = async (email: string, password: string) => {
   if (!user) throw new AppError('Invalid credentials', 401);
 
   const isPasswordValid = await bcrypt.compare(password, user.password);
-  if (!isValid) throw new AppError('Invalid credentials', 401);
+  if (!isPasswordValid) throw new AppError('Invalid credentials', 401);
 
   const accessToken = generateAccessToken(user.id, user.role);
   const refreshToken = generateRefreshToken(user.id, user.role);
@@ -86,4 +90,59 @@ export const loginUser = async (email: string, password: string) => {
       role: user.role,
     },
   };
+};
+
+/*
+REFRESH SESSION
+- (token)
+- hash token
+- error if refresh token not matches in database
+- payload (id, role)
+- verify token
+- delete old refresh token
+- generate new access and refresh token
+- store new refresh token in database
+- return access token and refresh token
+*/
+export const refreshUserSession = async (token: string) => {
+  const hashed = hashToken(token);
+
+  const existing = await findRefreshToken(hashed);
+  if (!existing) throw new AppError('Invalid refresh token', 401);
+
+  let payload: {
+    id: string;
+    role: string;
+  };
+
+  try {
+    payload = jwt.verify(hashed, env.JWT_REFRESH_SECRET) as {
+      id: string;
+      role: string;
+    };
+  } catch (error) {
+    throw new AppError('Expired refresh token', 401);
+  }
+
+  await deleteRefreshToken(hashed);
+
+  const newAccessToken = generateAccessToken(payload.id, payload.role);
+  const newRefreshToken = generateRefreshToken(payload.id, payload.role);
+
+  await storeRefreshToken({
+    id: uuid(),
+    userId: payload.id,
+    token: hashToken(newRefreshToken),
+  });
+
+  return {
+    accessToken: newAccessToken,
+    refreshToken: newRefreshToken,
+  };
+};
+
+export const logoutUser = async (token: string) => {
+  const hashed = hashToken(token);
+
+  await deleteRefreshToken(token);
 };

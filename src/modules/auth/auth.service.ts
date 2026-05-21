@@ -94,10 +94,11 @@ export const loginUser = async (email: string, password: string) => {
 
 /*
 REFRESH SESSION
-- (token)
-- hash token
-- error if refresh token not matches in database
 - payload (id, role)
+- (token)
+- verify original token first
+- hash token
+- error if hashed token not matches in database
 - verify token
 - delete old refresh token
 - generate new access and refresh token
@@ -105,24 +106,24 @@ REFRESH SESSION
 - return access token and refresh token
 */
 export const refreshUserSession = async (token: string) => {
-  const hashed = hashToken(token);
-
-  const existing = await findRefreshToken(hashed);
-  if (!existing) throw new AppError('Invalid refresh token', 401);
-
   let payload: {
     id: string;
     role: string;
   };
 
   try {
-    payload = jwt.verify(hashed, env.JWT_REFRESH_SECRET) as {
+    payload = jwt.verify(token, env.JWT_REFRESH_SECRET) as {
       id: string;
       role: string;
     };
   } catch (error) {
-    throw new AppError('Expired refresh token', 401);
+    throw new AppError('Expired or invalid refresh token', 401);
   }
+
+  const hashed = hashToken(token);
+
+  const existing = await findRefreshToken(hashed);
+  if (!existing) throw new AppError('Invalid refresh token', 401);
 
   await deleteRefreshToken(hashed);
 
@@ -144,5 +145,5 @@ export const refreshUserSession = async (token: string) => {
 export const logoutUser = async (token: string) => {
   const hashed = hashToken(token);
 
-  await deleteRefreshToken(token);
+  await deleteRefreshToken(hashed);
 };

@@ -31,10 +31,15 @@ app.use(
 );
 
 // routes
+import authRoutes from './modules/auth/auth.routes';
+import userRoutes from './modules/users/users.routes';
+
+app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/users', userRoutes);
 
 app.use(errorMiddleware);
 
-app.get('/health', (req, res) => {
+app.get('/health', (_req, res) => {
   res.json({
     success: true,
     message: 'Server running smoothly',

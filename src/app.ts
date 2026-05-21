@@ -34,10 +34,12 @@ app.use(
 import authRoutes from './modules/auth/auth.routes';
 import userRoutes from './modules/users/users.routes';
 import companyRoutes from './modules/companies/companies.routes';
+import jobRoutes from './modules/jobs/jobs.routes';
 
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/companies', companyRoutes);
+app.use('/api/v1/jobs', jobRoutes);
 
 app.use(errorMiddleware);
 

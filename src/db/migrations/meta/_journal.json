@@ -22,6 +22,20 @@
       "when": 1779342613134,
       "tag": "0002_faithful_mikhail_rasputin",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1779367435170,
+      "tag": "0003_amused_silk_fever",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1779373363124,
+      "tag": "0004_giant_blue_blade",
+      "breakpoints": true
     }
   ]
 }

@@ -5,3 +5,5 @@ export * from './profiles/candidates';
 export * from './profiles/employers';
 
 export * from './companies/companies';
+
+export * from './jobs/jobs';

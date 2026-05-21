@@ -8,6 +8,20 @@
       "when": 1779332521335,
       "tag": "0000_steep_molecule_man",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1779338387597,
+      "tag": "0001_easy_silverclaw",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1779342613134,
+      "tag": "0002_faithful_mikhail_rasputin",
+      "breakpoints": true
     }
   ]
 }

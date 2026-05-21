@@ -21,7 +21,6 @@ export const updateProfile = asyncHandler(
 
 export const getProfile = asyncHandler(async (req: Request, res: Response) => {
   const profile = await getMyProfile(req.user!.id, req.user!.role);
-  console.log({ id: req.user!.id, role: req.user!.role, profile }, 'profile');
 
   res.json(apiResponse(profile, 'Fetched profile info successfully'));
 });

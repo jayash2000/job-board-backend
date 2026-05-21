@@ -3,3 +3,5 @@ export * from './refreshTokens';
 
 export * from './profiles/candidates';
 export * from './profiles/employers';
+
+export * from './companies/companies';
